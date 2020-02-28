@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="vendors/css/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="vendors/css/fontawesome/css/brands.min.css">
+    <link rel="stylesheet" href="vendors/css/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="resources/css/all.css">
+</head>
+
+<body>
+    <div class="container-fluid container-md px-0 d-flex flex-column monitor">
+        <nav class="mask-navi navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="#">
+                <img class="d-inline-block m-0" src="resources/img/logo.png" alt="logo">
+                <h1 class="d-inline-block align-middle m-0">口罩即時查</h1>
+            </a>
+            <button class="call-control navbar-toggler mr-0 border-0" type="button" data-target="#map-control"
+                aria-controls="map-control" aria-expanded="false" aria-label="Toggle navigation">
+                <img class="img-fluid" src="resources/img/ic_toggler@2x.png" alt="">
+        </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="modal" data-target="#staticBackdrop">口罩怎麼買</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">2/20 最新公告</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="img-fluid" src="resources/img/mask_realname.jpg" alt="Real-time mask purchase system">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="map-interface d-flex">
+            <div class="map-control-container h-100 overflow-auto">
+                <div class="bg-light d-flex flex-column" id="map-control">
+                    <div class="pt-3 flex-grow-1" :class="{'px-3': page == 'main', 'd-flex flex-column position-relative': page == 'control'}">
+                        <template v-if="page == 'main'">
+                            <div class="search-control form-inline my-2 my-lg-0 rounded" @click="page = 'control'; searchText.cur='';">
+                                <p class="searchbar form-control border border-right-0 my-0">
+                                    <span v-if="searchText == '' && mode !== 'gps'">點一下搜尋地點或使用定位</span>
+                                    <span v-else-if="mode == 'gps'">目前定位</span>
+                                    <span v-else v-text="searchText.pre"></span>
+                                </p>
+                                <span class="find-phar btn border border-left-0">
+                                    <i class="fas fa-crosshairs"></i>
+                                </span>
+                            </div>
+                            <h2 class="available my-3">
+                                <span v-text="avaliableDay">奇數</span><small class="ml-2">購買日</small>
+                                <button type="button" class="realname-info btn p-0 rounded-circle" data-toggle="modal" data-target="#staticBackdrop"></button>
+                            </h2>
+                            <div class="d-flex align-items-center my-2">
+                                <p class="description my-auto">
+                                    方圓 5 km 以內的的供應商<br>
+                                    更新時間: <span v-if="appState == 'ready'" v-text="timeStamp"></span>
+                                    <span v-else-if="appState !== 'error'">資料下載中</span>
+                                </p>
+                                <button class="btn rounded-pill my-2 ml-auto" @click="appState='download'">重整清單</button>
+                            </div>
+                            <div class="mask-sort d-inline-block">
+                                <i class="fas fa-sort-amount-down sort-icon"></i>
+                                <button class="btn py-1 ml-1 rounded-pill" :class="{'active': category == 'distance'}" @click="category='distance'">距離</button>
+                                <button class="btn py-1 ml-1 rounded-pill" :class="{'active': category == 'adult'}" @click="category='adult'">大人口罩</button>
+                                <button class="btn py-1 ml-1 rounded-pill" :class="{'active': category == 'child'}" @click="category='child'">小孩口罩</button>
+                            </div>
+                            <p class="alert alert-danger" v-if="appState == 'error'">
+                                抱歉，我們無法讀取口罩即時資料。請稍後再試一次看看，如果再不行請檢查一下網路。
+                            </p>
+                            <ul class="pharmacy-list list-group">
+                                <li class="list-group-item my-2 px-3 border-0 rounded" v-for="item in listPhar">
+                                    <ul class="mask-quantity list-group flex-row mb-2">
+                                        <li class="list-group-item rounded border-0 px-3 w-50" :class="classify(item.properties.mask_adult)">成人口罩數量<em>{{item.properties.mask_adult}}</em>片</li>
+                                        <li class="list-group-item rounded border-0 px-3 w-50" :class="classify(item.properties.mask_child)">兒童口罩數量<em>{{item.properties.mask_child}}</em>片</li>
+                                    </ul>
+                                    <h3 class="pharmacy-name">{{item.properties.name}}</h3>
+                                    <ul class="pharmacy-info list-group">
+                                        <li class="list-group-item px-0 py-1 border-0">
+                                            <i class="fas fa-map-marker-alt mask-app-icon"></i>
+                                            <span>{{item.properties.address}}</span>
+                                            <a href="#" @click.prevent="centering(item.geometry.coordinates)"><small>看地圖</small></a>
+                                        </li>
+                                        <li class="list-group-item px-0 py-1 border-0">
+                                            <i class="fas fa-phone mask-app-icon"></i>
+                                            <span>{{item.properties.phone}}</span>
+                                            <a :href="'tel:'+item.properties.phone"><small>打過去</small></a>
+                                        </li>
+                                        <li class="list-group-item side-note px-0 py-1 border-0">
+                                            <i class="fas fa-list-ul mask-app-icon"></i>
+                                            <span>{{item.properties.note}}</span>
+                                        </li>
+                                        <li class="list-group-item side-note px-0 py-1 border-0">
+                                            <i class="fas fa-list-ul mask-app-icon"></i>
+                                            <span>{{item.properties.custom_note}}</span>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <p class="my-2 text-center" v-if="chosen.length !== 0">尚有 {{numPhar}} 筆</p>
+                            <button class="see-more btn d-block rounded-pill mx-auto p-0" v-if="chosen.length !== 0" @click="itemNum += 10">查看更多</button>
+                            <div class="position-relative mb-4">
+                                <button class="back-to-top position-absolute btn d-block border-0 rounded-circle mx-auto p-0" v-if="chosen.length !== 0" type="submit" @click="scrollToTop">TOP</button>
+                            </div>
+                        </template>
+                        <template v-if="page == 'control'">
+                            <form class="search-control form-inline justify-content-center mb-3 rounded">
+                                <button class="btn" @click.prevent="page = 'main'">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <input class="searchbar form-control border border-right-0" v-model="searchText.cur" @keyup.enter="search(searchText.cur)" type="text" aria-label="Search" placeholder="輸入地名或縣市名">
+                                <button class="find-phar btn border border-left-0 mr-3" @click.prevent="search(searchText.cur)">
+                                    <i class="fas fa-search-location"></i>
+                                </button>
+                            </form>
+                            <div class="history-list-title px-3 mb-2 d-flex align-items-center">
+                                <h3 class="my-2">最近搜尋</h3>
+                                <button class="clear-all btn rounded-pill ml-auto py-1" @click="history = [];">清除</button>
+                            </div>
+                            <div class="flex-grow-1 overflow-auto h-100">
+                                <ul class="history-list list-group mx-3">
+                                    <li v-for="record in history" @click="search(record)" class="list-group-item rounded-0 border-top-0 border-left-0 border-right-0">{{record}}</li>
+                                </ul>
+                            </div>
+                            <div class="locate d-flex position-absolute align-items-center">
+                                <span>使用目前位置</span>
+                                <button class="locate-btn btn border-0 rounded-circle ml-auto p-2" @click="findAround">
+                                    <img class="d-block" src="resources/img/ic_location@2x.png" alt="locate">
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                    <footer class="copyright px-4 py-3">
+                        <ul class="list-group list-group-horizontal">
+                            <li class="list-group-item border-left-0 border-white border-bottom-0 border-top-0 py-0 pl-0 pr-2">防疫專線 1922</li>
+                            <li class="list-group-item border-0 py-0 pl-2 pr-0">口罩資訊 1911</li>
+                        </ul>
+                        <p class="mt-2">
+                            Search Engine: Nominatim <br>
+                            Develper: Mack Chen / UI: PY Design
+                        </p>
+                    </footer>
+                </div>
+            </div>
+            <div class="d-flex flex-column flex-grow-1">
+                <div id="map" class="flex-grow-1"></div>
+                <footer class="copyright px-4 py-3 d-lg-flex d-none flex-column align-items-end">
+                    <ul class="list-group list-group-horizontal">
+                        <li class="list-group-item border-left-0 border-dark border-bottom-0 border-top-0 py-0 pl-0 pr-2">防疫專線 1922</li>
+                        <li class="list-group-item border-0 py-0 pl-2 pr-0">口罩資訊 1911</li>
+                    </ul>
+                    <p class="mt-2 text-right">
+                        Search Engine: Nominatim <br>
+                        Develper: Mack Chen / UI: PY Design</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="resources/js/maskMap.js"></script>
+</body>
+
+</html>

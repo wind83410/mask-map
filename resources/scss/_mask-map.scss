@@ -1,0 +1,274 @@
+.monitor {
+    height: 100vh;
+}
+
+body {
+    font-family: 
+    -apple-system,
+    // Chrome < 56 for macOS (San Francisco)
+    BlinkMacSystemFont,
+    // Windows
+    "Noto Sans TC", "Segoe UI", "Microsoft JhengHei",
+    // Android
+    "Roboto",
+    // Basic web fallback
+    "Helvetica Neue", Arial, sans-serif,
+    // Emoji fonts
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.mask-navi {
+    .navbar-brand {
+        color: #34495E;
+        h1 {
+            font-size: inherit;
+        }
+    }
+    .navbar-nav {
+        .nav-item {
+            position: relative;
+            @media (min-width: 992px) {
+                &:hover::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    height: 5px;
+                    bottom: -9.28px;
+                    background-color: #34495E;
+                    border-top-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                }
+            }
+            .nav-link {
+                color: #34495E;
+            }
+        }
+    }
+}
+
+.map-interface {
+    flex-grow: 1;
+    height: 0;
+    color: #34495E;
+    overflow: hidden;
+    position: relative;
+    .map-control-container {
+        width: 375px;
+        flex: 0 0 auto;
+        @media (max-width: 992px) {
+            position: absolute;
+            top: 0;
+            transform: translate(-100%);
+            transition: transform 1s ease-in-out;
+            z-index:2;
+            &.slide-in {
+                transform: translate(0);
+                transition: transform 1s ease-in-out;
+            }
+        }
+        #map-control {
+            min-height: 100%;
+            button {
+                color: #34495E;
+                border: 2px solid #34495E;
+                &:hover, &.active {
+                    color: #fff;
+                    background-color: #34495E;
+                }
+            }
+            .search-control {
+                & > button {
+                    border:0;
+                    background-color: transparent;
+                    &:hover {color: #E67E22;}
+                }
+                .searchbar {
+                    flex-grow: 1;
+                    width: 0;
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    box-shadow: none;
+                }
+                .find-phar {
+                    width: auto;
+                    flex-basis: auto;
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                    color: #34495E;
+                    background-color: #fff;
+                }
+            }
+            .available {
+                font-size: 3rem;
+                small {
+                    font-size: 1.5rem;
+                }
+                .realname-info {
+                    background: url(../img/ic_help@2x.png) transparent no-repeat;
+                    height: 24px;
+                    width: 24px;
+                    border: 0;
+                    &:hover {
+                        box-shadow: 0 0 0.4rem 0.2rem rgba(0,123,255,.25);
+                    }
+                }
+            }
+            .description {
+                font-size: 0.8rem;
+                line-height: 1.5;
+            }
+            .mask-sort {
+                .sort-icon {font-size: 1rem;}
+                & > button {font-size: 0.75rem;}
+            }
+            .pharmacy-list {
+                flex-grow: 1;
+                .mask-quantity {
+                    height: 92px;
+                    color: white;
+                    em {
+                        font-size: 1.8rem;
+                        font-style: normal;
+                        margin-right: 1rem;
+                    }
+                    li:first-of-type {margin-right: 11px;}
+                    .out-of-stock {
+                        background: url(../img/ic_stock_none@2x.png) rgba(112, 119, 124, 0.3) right -10px bottom 10% no-repeat;
+                    }
+                    .in-stock {
+                        background: url(../img/ic_stock_full@2x.png) #11787A right -10px bottom 10% no-repeat;
+                    }
+                    .short-supply {
+                        background: url(../img/ic_stock_few@2x.png) #E67E22 right -10px bottom 10% no-repeat;
+                    }
+                }
+                .pharmacy-name {font-size: 1rem;}
+                .pharmacy-info {
+                    & > li {
+                        font-size: 0.875rem;
+                        display: grid;
+                        grid-template-columns: [icon-start] 30px [icon-end] auto [button-start] 50px [button-end];
+                        align-items: top;
+                        line-height: 1.5em;
+                        & > a {
+                            grid-column-start: button-start;
+                            grid-column-end: button-end;
+                            text-align: right;
+                        }
+                        & > span {
+                            grid-column-start: icon-end;
+                            grid-column-end: button-start;
+                            align-self: start;
+                        }
+                        .mask-app-icon {
+                            grid-column-start: icon-start;
+                            grid-column-end: icon-end;
+                            text-align: center;
+                            line-height: 1.5em;
+                        }
+                    }
+                    .side-note {
+                        & > span {
+                            grid-column-start: icon-end;
+                            grid-column-end: button-end;
+                        }
+                    }
+                }
+            }
+            .see-more {
+                width: 152px;
+                position: sticky;
+                bottom: 50px;
+                height: 46px;
+                line-height: 46px;
+                color: #fff;
+                background-color:#34495E;
+                box-shadow:rgba(52, 73, 94, 0.3) 0 10px 20px;
+            }
+            .back-to-top {
+                right: 1rem;
+                top: -46px;
+                width: 46px;
+                height: 46px;
+                background-color:#34495E;
+                color: #fff;
+                box-shadow:rgba(52, 73, 94, 0.3) 0 10px 20px;
+            }
+            .see-more:hover, .back-to-top:hover {
+                background-color: #22303d;
+            }
+            .locate {
+                right: 1rem;
+                bottom: 1rem;
+                span {
+                    font-size: 0.7rem;
+                    margin-right: 0.5rem;
+                }
+                .locate-btn {
+                    background-color: #fff;
+                    box-shadow:rgba(0, 0, 0, 0.16) 0 3px 6px;
+                    &:hover {
+                        background-color: #f7dec4;
+                    }
+                }
+            }
+            .copyright {
+                background-color: #34495E;
+                & > ul li {
+                    background-color: transparent;
+                    color: #fff;
+                }
+                p {
+                    color: #566778;
+                }
+            }
+    
+            .history-list-title {
+                background-color: #34495E;
+                color: #fff;
+                h3 {font-size: 1rem;}
+                .clear-all {
+                    background-color: transparent;
+                    border: 2px solid #fff;
+                    color: inherit;
+                    font-size: 0.7rem;
+                    &:hover {
+                        background-color: #fff;
+                        color: #34495E;
+                    }
+                }
+            }
+            .history-list {
+                & > li {
+                    background-color: transparent;
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+                }
+            }
+        }
+    }
+    #map {
+        flex-grow: 1;
+        z-index: 1;
+            .mask-popup {
+            min-width: 100px;
+            color: white;
+            font-weight: bold;
+            .out-of-stock {
+                background: rgba(112, 119, 124, 0.3);
+            }
+            .in-stock {
+                background: #11787A;
+            }
+            .short-supply {
+                background: #E67E22;
+            }
+        }        
+    }
+    .copyright {
+        p {
+            font-size: 0.75rem;
+            color: rgba(86, 103, 120, 1);
+        }
+    }
+}

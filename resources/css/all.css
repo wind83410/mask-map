@@ -1,0 +1,350 @@
+.monitor {
+  height: 100vh;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", "Microsoft JhengHei", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.mask-navi .navbar-brand {
+  color: #34495E;
+}
+
+.mask-navi .navbar-brand h1 {
+  font-size: inherit;
+}
+
+.mask-navi .navbar-nav .nav-item {
+  position: relative;
+}
+
+@media (min-width: 992px) {
+  .mask-navi .navbar-nav .nav-item:hover::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 5px;
+    bottom: -9.28px;
+    background-color: #34495E;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+}
+
+.mask-navi .navbar-nav .nav-item .nav-link {
+  color: #34495E;
+}
+
+.map-interface {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  height: 0;
+  color: #34495E;
+  overflow: hidden;
+  position: relative;
+}
+
+.map-interface .map-control-container {
+  width: 375px;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+}
+
+@media (max-width: 992px) {
+  .map-interface .map-control-container {
+    position: absolute;
+    top: 0;
+    -webkit-transform: translate(-100%);
+            transform: translate(-100%);
+    -webkit-transition: -webkit-transform 1s ease-in-out;
+    transition: -webkit-transform 1s ease-in-out;
+    transition: transform 1s ease-in-out;
+    transition: transform 1s ease-in-out, -webkit-transform 1s ease-in-out;
+    z-index: 2;
+  }
+  .map-interface .map-control-container.slide-in {
+    -webkit-transform: translate(0);
+            transform: translate(0);
+    -webkit-transition: -webkit-transform 1s ease-in-out;
+    transition: -webkit-transform 1s ease-in-out;
+    transition: transform 1s ease-in-out;
+    transition: transform 1s ease-in-out, -webkit-transform 1s ease-in-out;
+  }
+}
+
+.map-interface .map-control-container #map-control {
+  min-height: 100%;
+}
+
+.map-interface .map-control-container #map-control button {
+  color: #34495E;
+  border: 2px solid #34495E;
+}
+
+.map-interface .map-control-container #map-control button:hover, .map-interface .map-control-container #map-control button.active {
+  color: #fff;
+  background-color: #34495E;
+}
+
+.map-interface .map-control-container #map-control .search-control > button {
+  border: 0;
+  background-color: transparent;
+}
+
+.map-interface .map-control-container #map-control .search-control > button:hover {
+  color: #E67E22;
+}
+
+.map-interface .map-control-container #map-control .search-control .searchbar {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  width: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.map-interface .map-control-container #map-control .search-control .find-phar {
+  width: auto;
+  -ms-flex-preferred-size: auto;
+      flex-basis: auto;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  color: #34495E;
+  background-color: #fff;
+}
+
+.map-interface .map-control-container #map-control .available {
+  font-size: 3rem;
+}
+
+.map-interface .map-control-container #map-control .available small {
+  font-size: 1.5rem;
+}
+
+.map-interface .map-control-container #map-control .available .realname-info {
+  background: url(../img/ic_help@2x.png) transparent no-repeat;
+  height: 24px;
+  width: 24px;
+  border: 0;
+}
+
+.map-interface .map-control-container #map-control .available .realname-info:hover {
+  -webkit-box-shadow: 0 0 0.4rem 0.2rem rgba(0, 123, 255, 0.25);
+          box-shadow: 0 0 0.4rem 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.map-interface .map-control-container #map-control .description {
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.map-interface .map-control-container #map-control .mask-sort .sort-icon {
+  font-size: 1rem;
+}
+
+.map-interface .map-control-container #map-control .mask-sort > button {
+  font-size: 0.75rem;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .mask-quantity {
+  height: 92px;
+  color: white;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .mask-quantity em {
+  font-size: 1.8rem;
+  font-style: normal;
+  margin-right: 1rem;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .mask-quantity li:first-of-type {
+  margin-right: 11px;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .mask-quantity .out-of-stock {
+  background: url(../img/ic_stock_none@2x.png) rgba(112, 119, 124, 0.3) right -10px bottom 10% no-repeat;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .mask-quantity .in-stock {
+  background: url(../img/ic_stock_full@2x.png) #11787A right -10px bottom 10% no-repeat;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .mask-quantity .short-supply {
+  background: url(../img/ic_stock_few@2x.png) #E67E22 right -10px bottom 10% no-repeat;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-name {
+  font-size: 1rem;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info > li {
+  font-size: 0.875rem;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: [icon-start] 30px [icon-end] auto [button-start] 50px [button-end];
+      grid-template-columns: [icon-start] 30px [icon-end] auto [button-start] 50px [button-end];
+  -webkit-box-align: top;
+      -ms-flex-align: top;
+          align-items: top;
+  line-height: 1.5em;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info > li > a {
+  -ms-grid-column: button-start;
+      grid-column-start: button-start;
+  grid-column-end: button-end;
+  text-align: right;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info > li > span {
+  -ms-grid-column: icon-end;
+      grid-column-start: icon-end;
+  grid-column-end: button-start;
+  -ms-flex-item-align: start;
+      -ms-grid-row-align: start;
+      align-self: start;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info > li .mask-app-icon {
+  -ms-grid-column: icon-start;
+      grid-column-start: icon-start;
+  grid-column-end: icon-end;
+  text-align: center;
+  line-height: 1.5em;
+}
+
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info .side-note > span {
+  -ms-grid-column: icon-end;
+      grid-column-start: icon-end;
+  grid-column-end: button-end;
+}
+
+.map-interface .map-control-container #map-control .see-more {
+  width: 152px;
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 50px;
+  height: 46px;
+  line-height: 46px;
+  color: #fff;
+  background-color: #34495E;
+  -webkit-box-shadow: rgba(52, 73, 94, 0.3) 0 10px 20px;
+          box-shadow: rgba(52, 73, 94, 0.3) 0 10px 20px;
+}
+
+.map-interface .map-control-container #map-control .back-to-top {
+  right: 1rem;
+  top: -46px;
+  width: 46px;
+  height: 46px;
+  background-color: #34495E;
+  color: #fff;
+  -webkit-box-shadow: rgba(52, 73, 94, 0.3) 0 10px 20px;
+          box-shadow: rgba(52, 73, 94, 0.3) 0 10px 20px;
+}
+
+.map-interface .map-control-container #map-control .see-more:hover, .map-interface .map-control-container #map-control .back-to-top:hover {
+  background-color: #22303d;
+}
+
+.map-interface .map-control-container #map-control .locate {
+  right: 1rem;
+  bottom: 1rem;
+}
+
+.map-interface .map-control-container #map-control .locate span {
+  font-size: 0.7rem;
+  margin-right: 0.5rem;
+}
+
+.map-interface .map-control-container #map-control .locate .locate-btn {
+  background-color: #fff;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+          box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+}
+
+.map-interface .map-control-container #map-control .locate .locate-btn:hover {
+  background-color: #f7dec4;
+}
+
+.map-interface .map-control-container #map-control .copyright {
+  background-color: #34495E;
+}
+
+.map-interface .map-control-container #map-control .copyright > ul li {
+  background-color: transparent;
+  color: #fff;
+}
+
+.map-interface .map-control-container #map-control .copyright p {
+  color: #566778;
+}
+
+.map-interface .map-control-container #map-control .history-list-title {
+  background-color: #34495E;
+  color: #fff;
+}
+
+.map-interface .map-control-container #map-control .history-list-title h3 {
+  font-size: 1rem;
+}
+
+.map-interface .map-control-container #map-control .history-list-title .clear-all {
+  background-color: transparent;
+  border: 2px solid #fff;
+  color: inherit;
+  font-size: 0.7rem;
+}
+
+.map-interface .map-control-container #map-control .history-list-title .clear-all:hover {
+  background-color: #fff;
+  color: #34495E;
+}
+
+.map-interface .map-control-container #map-control .history-list > li {
+  background-color: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+}
+
+.map-interface #map {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  z-index: 1;
+}
+
+.map-interface #map .mask-popup {
+  min-width: 100px;
+  color: white;
+  font-weight: bold;
+}
+
+.map-interface #map .mask-popup .out-of-stock {
+  background: rgba(112, 119, 124, 0.3);
+}
+
+.map-interface #map .mask-popup .in-stock {
+  background: #11787A;
+}
+
+.map-interface #map .mask-popup .short-supply {
+  background: #E67E22;
+}
+
+.map-interface .copyright p {
+  font-size: 0.75rem;
+  color: #566778;
+}
+/*# sourceMappingURL=all.css.map */
