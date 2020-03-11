@@ -54,7 +54,8 @@ body {
     overflow: hidden;
     position: relative;
     .map-control-container {
-        width: 375px;
+        max-width: 350px;
+        width: 100%;
         flex: 0 0 auto;
         @media (max-width: 992px) {
             position: absolute;
@@ -72,16 +73,19 @@ body {
             button {
                 color: #34495E;
                 border: 2px solid #34495E;
-                &:hover, &.active {
+                &:not([disabled]):hover, &.active {
                     color: #fff;
                     background-color: #34495E;
                 }
             }
             .search-control {
-                & > button {
+                .back {
                     border:0;
                     background-color: transparent;
-                    &:hover {color: #E67E22;}
+                    &:hover {
+                        color: #E67E22;
+                        background-color: transparent;
+                    }
                 }
                 .searchbar {
                     flex-grow: 1;
@@ -111,6 +115,7 @@ body {
                     border: 0;
                     &:hover {
                         box-shadow: 0 0 0.4rem 0.2rem rgba(0,123,255,.25);
+                        background-color: inherit
                     }
                 }
             }

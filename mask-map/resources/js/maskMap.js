@@ -49,23 +49,31 @@ $(document).ready(function() {
 let maskApp = new Vue({
     el: '#map-control',
     data: {
-        pharmacies: [], // original data
-        chosen: [],
-        order: [],
-        history: [],
-        timeStamp: '',
-        userLoc: {},
         locMarker: {},
-        category: 'adult',
-        appState: 'load',
-        page: 'main',
-        mode: 'gps',
-        itemNum: 10,
-        weekDay: '',
-        searchText: {
-            cur: '',
-            pre: ''
+        usedLoc: { 
+            position: {
+                pre: {},
+                cur: {}
+            },
+            searchLoc: []
         },
+        appControl: {
+            dataState: 'load',
+            mode: 'gps',
+            page: 'main',
+            searchText: {
+                cur: '',
+                pre: ''
+            },
+            weekDay: '',
+            chosen: [],
+            category: 'distance',
+            itemNum: 10,
+        },
+        pharData: {
+            pharmacies: [],
+            timeStamp: ''
+        }   
     },
     methods: {
         getQuantity: function (){
@@ -75,44 +83,60 @@ let maskApp = new Vue({
             xml.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json?fbclid=IwAR24jhHb_hRsjl7yLeyUOaEE6QpLLBlY04mwxqokTOxZbQ6-n8jk4qdmhvc');
             xml.send();
             xml.onload = function(){
-                vm.pharmacies = JSON.parse(this.responseText).features;
-                if (vm.pharmacies.length !== 0) {
-                    vm.timeStamp = vm.pharmacies[0].properties.updated;
+                vm.pharData.pharmacies = JSON.parse(this.responseText).features;
+                if (vm.pharData.pharmacies.length !== 0) {
+                    vm.pharData.timeStamp = vm.pharData.pharmacies[0].properties.updated;
                     markers.clearLayers();
-                    vm.pharAround();
-                    vm.drawSpots(vm.pharmacies);
-                    vm.appState = 'ready';
+                    if (vm.usedLoc.position.cur.lat) {
+                        vm.pharAround();
+                    }
+                    vm.drawSpots(vm.pharData.pharmacies);
+                    vm.appControl.dataState = 'ready';
                 } else {
-                    vm.appState = 'error';
+                    vm.appControl.dataState = 'error';
                 }
             };
             xml.onerror = function() {
-                vm.appState = 'error';
+                vm.appControl.dataState = 'error';
             }
         },
         getGPS: function() {
             var vm = this;
-            vm.mode = 'gps';
+            vm.appControl.mode = 'gps';
             map.once('locationfound', function(event){
-                vm.userLoc = event.latlng;
+                vm.usedLoc.position.cur = event.latlng;
+                vm.usedLoc.position.pre = $.extend(true, {}, event.latlng);
+                vm.pharAround();
+                map.removeLayer(vm.locMarker);
                 vm.locMarker = L.marker(event.latlng);
-                vm.pharAround(); // bug here
                 map.addLayer(vm.locMarker);
+            });
+            map.once('locationerror', function(){
+                if (vm.usedLoc.position.pre.lat) {
+                    alert('無法順利取得您現在的位置，將使用舊定位');
+                    vm.usedLoc.position.cur = $.extend({}, vm.usedLoc.position.pre);
+                    vm.pharAround();
+                    map.removeLayer(vm.locMarker);
+                    vm.locMarker = L.marker(vm.usedLoc.position.cur);
+                    map.addLayer(vm.locMarker);
+                } else {
+                    alert('無法定位，請允許存取位置或稍後重試');
+                }
             });
             map.locate({setView: true});
         },
         findAround: function() {
-            if (this.mode == 'search') {
+            if (this.appControl.mode == 'search') {
                 map.removeLayer(this.locMarker);
                 this.getGPS();
-                this.mode = 'gps';
+                this.appControl.mode = 'gps';
             }
         },
         pharAround: function (){
             var vm = this;
-            this.chosen = this.pharmacies.filter( (item) => {
+            this.appControl.chosen = this.pharData.pharmacies.filter( (item) => {
                 let pharLoc = {lat: item.geometry.coordinates[1], lng:item.geometry.coordinates[0]};
-                return map.distance(vm.userLoc, pharLoc) < 5000;
+                return map.distance(vm.usedLoc.position.cur, pharLoc) < 5000;
             });
         },
         drawSpots: function(arr) {
@@ -121,7 +145,7 @@ let maskApp = new Vue({
                 let name = item.properties.name;
                 let quan = [item.properties.mask_adult, item.properties.mask_child];
                 let pharLoc = {lat: item.geometry.coordinates[1], lng:item.geometry.coordinates[0]};
-                let specMask = vm.category == 'adult' ? quan[0] : quan[1];
+                let specMask = vm.appControl.category == 'adult' ? quan[0] : quan[1];
                 let tag;
                 if (specMask > 100) {tag = greenIcon;} 
                 else if (specMask > 50) {tag = orangeIcon}
@@ -147,33 +171,43 @@ let maskApp = new Vue({
                 let searchAdd = `https://nominatim.openstreetmap.org/search?q=${keyword}&format=geojson`;
                 let cor;
                 let vm = this;
+                let searched = [];
 
+                vm.usedLoc.searchLoc.forEach(function(item) {
+                    searched.push(item.name);
+                })
                 xml.open('get', searchAdd);
                 xml.send();
                 xml.onload = function (){
                     cor = JSON.parse(this.responseText).features[0].geometry.coordinates;
                     map.setView([cor[1], cor[0]], 16);
-                    vm.userLoc = {
+                    vm.usedLoc.position.cur = {
                         lat: cor[1],
                         lng: cor[0]
                     };
                     vm.pharAround();
                     map.removeLayer(vm.locMarker);
-                    vm.locMarker = L.marker(vm.userLoc);
+                    vm.locMarker = L.marker(vm.usedLoc.position.cur);
                     map.addLayer(vm.locMarker);
-                    if (vm.mode == 'gps') {
+                    if (vm.appControl.mode == 'gps') {
                         map.stopLocate();
-                        vm.mode = 'search';
+                        vm.appControl.mode = 'search';
                     }
-                    if (vm.chosen.length !== 0 && !vm.history.includes(keyword)) {
-                        vm.history.push(keyword);
-                        vm.searchText.pre = keyword;
-                        vm.page = 'main';
-                    } else if (vm.history.includes(keyword)) {
-                        vm.searchText.pre = keyword;
-                        vm.page = 'main';
+                    if (vm.appControl.chosen.length !== 0 && !searched.includes(keyword)) {
+                        vm.usedLoc.searchLoc.push({
+                            name: keyword,
+                            coordinates: {
+                                lat: cor[1],
+                                lng: cor[0]
+                            }
+                        });
+                        vm.appControl.searchText.pre = keyword;
+                        vm.appControl.page = 'main';
+                    } else if (searched.includes(keyword)) {
+                        vm.appControl.searchText.pre = keyword;
+                        vm.appControl.page = 'main';
                     }
-                    else if (vm.chosen.length == 0) {
+                    else if (vm.appControl.chosen.length == 0) {
                         alert('沒有結果，建議更換關鍵字。')
                     }
                 };
@@ -184,6 +218,15 @@ let maskApp = new Vue({
                 alert('請輸入關鍵字')
             }
         },
+        searchRecord: function(record) {
+            this.usedLoc.position.cur = record.coordinates;
+            this.centering([record.coordinates.lng, record.coordinates.lat]);
+            this.pharAround();
+            this.appControl.searchText.pre = record.name;
+            map.removeLayer(this.locMarker);
+            this.locMarker = L.marker(this.usedLoc.position.cur);
+            map.addLayer(this.locMarker);
+        },
         // functions for internal use
         classify: function(mask_quan) {
             if (mask_quan == 0) {return 'out-of-stock';}
@@ -191,11 +234,11 @@ let maskApp = new Vue({
             else if (mask_quan > 100) {return 'in-stock';}
         },
         merit: function(item1, item2) {
-            switch (this.category) {
+            switch (this.appControl.category) {
                 case 'distance':
                     let itemCor1 = [item1.geometry.coordinates[1], item1.geometry.coordinates[0]];
                     let itemCor2 = [item2.geometry.coordinates[1], item2.geometry.coordinates[0]];
-                    return -(map.distance(itemCor1, this.userLoc) - map.distance(itemCor2, this.userLoc));
+                    return -(map.distance(itemCor1, this.usedLoc.position.cur) - map.distance(itemCor2, this.usedLoc.position.cur));
                 case 'adult':
                     return item1.properties.mask_adult - item2.properties.mask_adult;
                 case 'child':
@@ -225,24 +268,24 @@ let maskApp = new Vue({
         },
         whichDay: function() {
             let time = Date.now();
-            this.weekDay = new Date(time).getDay();
+            this.appControl.weekDay = new Date(time).getDay();
         }
     },
     computed: {
         listPhar: function() {
-            if (this.chosen.length !== 0) {
-                if (this.itemNum > this.chosen.length) {this.itemNum = this.chosen.length;}
-                this.chosen = this.quickSort(this.chosen, 0, this.chosen.length-1);
-                return this.chosen.slice(0, this.itemNum);
+            if (this.appControl.chosen.length !== 0) {
+                if (this.appControl.itemNum > this.appControl.chosen.length) {this.appControl.itemNum = this.appControl.chosen.length;}
+                this.appControl.chosen = this.quickSort(this.appControl.chosen, 0, this.appControl.chosen.length-1);
+                return this.appControl.chosen.slice(0, this.appControl.itemNum);
             }
         },
         numPhar: function() {
-            return this.chosen.length - this.itemNum;
+            return this.appControl.chosen.length - this.appControl.itemNum;
         },
         avaliableDay: function() {
-            if (this.weekDay == 0) {
+            if (this.appControl.weekDay == 0) {
                 return '都能買';
-            } else if (this.weekDay%2 == 0) {
+            } else if (this.appControl.weekDay%2 == 0) {
                 return '偶數';
             } else {
                 return '奇數';
@@ -250,7 +293,7 @@ let maskApp = new Vue({
         }
     },
     watch: {
-        appState: function(cur, pre) {
+        'appControl.dataState': function(cur) {
             if (cur=='download') {
                 this.getQuantity();
             }

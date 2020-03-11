@@ -47,7 +47,8 @@ body {
 }
 
 .map-interface .map-control-container {
-  width: 375px;
+  max-width: 350px;
+  width: 100%;
   -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
           flex: 0 0 auto;
@@ -84,18 +85,19 @@ body {
   border: 2px solid #34495E;
 }
 
-.map-interface .map-control-container #map-control button:hover, .map-interface .map-control-container #map-control button.active {
+.map-interface .map-control-container #map-control button:not([disabled]):hover, .map-interface .map-control-container #map-control button.active {
   color: #fff;
   background-color: #34495E;
 }
 
-.map-interface .map-control-container #map-control .search-control > button {
+.map-interface .map-control-container #map-control .search-control .back {
   border: 0;
   background-color: transparent;
 }
 
-.map-interface .map-control-container #map-control .search-control > button:hover {
+.map-interface .map-control-container #map-control .search-control .back:hover {
   color: #E67E22;
+  background-color: transparent;
 }
 
 .map-interface .map-control-container #map-control .search-control .searchbar {
@@ -137,6 +139,7 @@ body {
 .map-interface .map-control-container #map-control .available .realname-info:hover {
   -webkit-box-shadow: 0 0 0.4rem 0.2rem rgba(0, 123, 255, 0.25);
           box-shadow: 0 0 0.4rem 0.2rem rgba(0, 123, 255, 0.25);
+  background-color: inherit;
 }
 
 .map-interface .map-control-container #map-control .description {
