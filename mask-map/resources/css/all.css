@@ -3,7 +3,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", "Microsoft JhengHei", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", "Microsoft JhengHei", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
 }
 
 .mask-navi .navbar-brand {
@@ -196,8 +196,8 @@ body {
   font-size: 0.875rem;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: [icon-start] 30px [icon-end] auto [button-start] 50px [button-end];
-      grid-template-columns: [icon-start] 30px [icon-end] auto [button-start] 50px [button-end];
+  -ms-grid-columns: [icon-start] 30px [icon-end] auto [button-start] 30px [button-end];
+      grid-template-columns: [icon-start] 30px [icon-end] auto [button-start] 30px [button-end];
   -webkit-box-align: top;
       -ms-flex-align: top;
           align-items: top;
@@ -220,12 +220,10 @@ body {
       align-self: start;
 }
 
-.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info > li .mask-app-icon {
+.map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info > li .info-item {
   -ms-grid-column: icon-start;
       grid-column-start: icon-start;
   grid-column-end: icon-end;
-  text-align: center;
-  line-height: 1.5em;
 }
 
 .map-interface .map-control-container #map-control .pharmacy-list .pharmacy-info .side-note > span {
@@ -344,6 +342,10 @@ body {
 
 .map-interface #map .mask-popup .short-supply {
   background: #E67E22;
+}
+
+.map-interface #map .info-popup {
+  width: 150px;
 }
 
 .map-interface .copyright p {

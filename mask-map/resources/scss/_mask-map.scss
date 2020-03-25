@@ -14,7 +14,7 @@ body {
     // Basic web fallback
     "Helvetica Neue", Arial, sans-serif,
     // Emoji fonts
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
 }
 
 .mask-navi {
@@ -153,7 +153,7 @@ body {
                     & > li {
                         font-size: 0.875rem;
                         display: grid;
-                        grid-template-columns: [icon-start] 30px [icon-end] auto [button-start] 50px [button-end];
+                        grid-template-columns: [icon-start] 30px [icon-end] auto [button-start] 30px [button-end];
                         align-items: top;
                         line-height: 1.5em;
                         & > a {
@@ -166,11 +166,9 @@ body {
                             grid-column-end: button-start;
                             align-self: start;
                         }
-                        .mask-app-icon {
+                        .info-item {
                             grid-column-start: icon-start;
                             grid-column-end: icon-end;
-                            text-align: center;
-                            line-height: 1.5em;
                         }
                     }
                     .side-note {
@@ -255,7 +253,7 @@ body {
     #map {
         flex-grow: 1;
         z-index: 1;
-            .mask-popup {
+        .mask-popup {
             min-width: 100px;
             color: white;
             font-weight: bold;
@@ -268,6 +266,9 @@ body {
             .short-supply {
                 background: #E67E22;
             }
+        }
+        .info-popup {
+            width: 150px;
         }        
     }
     .copyright {

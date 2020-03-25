@@ -130,6 +130,7 @@ let maskApp = new Vue({
                 map.removeLayer(this.locMarker);
                 this.getGPS();
                 this.appControl.mode = 'gps';
+                this.appControl.page = 'main';
             }
         },
         pharAround: function (){
@@ -151,19 +152,43 @@ let maskApp = new Vue({
                 else if (specMask > 50) {tag = orangeIcon}
                 else if (specMask > 0) {tag = redIcon}
                 else {tag = blackIcon}
-                markers.addLayer(L.marker(pharLoc, {icon: tag}).bindPopup(`
-                    <h5 class="text-center">${name}</h5>
-                    <ul class="list-group flex-row mask-popup">
-                        <li class="${vm.classify(quan[0])} list-group-item rounded border-0 mr-1 py-1 px-1 w-50 text-center h5">${quan[0]}</li>
-                        <li class="${vm.classify(quan[1])} list-group-item rounded border-0 py-1 px-1 w-50 text-center h5">${quan[1]}</li>
+                let markerLayer = L.marker(pharLoc, {icon: tag});
+                markers.addLayer(markerLayer.bindPopup(`
+                    <h6 class="text-center">${name}</h5>
+                    <ul class="d-flex mask-popup list-unstyled mb-2">
+                        <li class="${vm.classify(quan[0])} rounded border-0 mr-1 py-1 px-1 w-50 text-center h5">${quan[0]}</li>
+                        <li class="${vm.classify(quan[1])} rounded border-0 py-1 px-1 w-50 text-center h5">${quan[1]}</li>
                     </ul>
+                    <dl class="row no-gutters info-popup mb-2">
+                        <dt class="col-3 text-secondary">口罩</dt>
+                        <dd class="col-9">${item.properties.note}</dd>
+                        <dt class="col-3 text-secondary">備註</dt>
+                        <dd class="col-9">${item.properties.custom_note}</dd>
+                    </dl>
+                    <div class="d-flex w-100">
+                        <a class="flex-grow-1 text-primary text-center mr-1" href="https://www.google.com/maps/search/?api=1&query=${item.properties.name}+${item.properties.address}" target="_blank">
+                            <i class="fas fa-clock"></i>
+                            營業時間
+                        </a>
+                        <a class="flex-grow-1 text-primary text-center" href="tel:${item.properties.phone}" class="text-secondary">
+                            <i class="fas fa-phone"></i>
+                            打電話
+                        </a>
+                    </div>
                     `
                 ));
+                vm.$set(item, 'layerId', markers.getLayerId(markerLayer));
             });
             map.addLayer(markers);
         },
-        centering: function(cor) {
-            map.setView([cor[1], cor[0]]);
+        centering: function(item) {
+            map.flyTo({
+                lat: item.geometry.coordinates[1],
+                lng: item.geometry.coordinates[0]
+            }, 18);
+            map.once('moveend', () => {
+                markers.getLayer(item.layerId).openPopup();
+            })
         },
         search: function(keyword) {
             if (keyword !== '') {
@@ -220,12 +245,14 @@ let maskApp = new Vue({
         },
         searchRecord: function(record) {
             this.usedLoc.position.cur = record.coordinates;
-            this.centering([record.coordinates.lng, record.coordinates.lat]);
+            map.setView(record.coordinates);
             this.pharAround();
             this.appControl.searchText.pre = record.name;
             map.removeLayer(this.locMarker);
             this.locMarker = L.marker(this.usedLoc.position.cur);
             map.addLayer(this.locMarker);
+            this.appControl.mode = 'search';
+            this.appControl.page = 'main';
         },
         // functions for internal use
         classify: function(mask_quan) {
@@ -290,7 +317,7 @@ let maskApp = new Vue({
             } else {
                 return '奇數';
             }
-        }
+        },
     },
     watch: {
         'appControl.dataState': function(cur) {
