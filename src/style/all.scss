@@ -1,1 +1,8 @@
-@import '@/style/vendors/bootstrap';
+// vendors
+@import 'bootstrap';
+@import 'leaflet';
+@import 'leaflet.markercluster/dist/MarkerCluster';
+@import 'leaflet.markercluster/dist/MarkerCluster.Default';
+
+// components
+@import '@/style/components/mask-map'
