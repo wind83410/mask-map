@@ -1,15 +1,31 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite, First time for Vite" />
+  <div class="container-fluid px-0 d-flex flex-column monitor">
+    <Navbar />
+    <div class="map-interface d-flex">
+      <Panel />
+      <Map />
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Navbar from '@/components/Navbar.vue'
+import Panel from '@/components/Panel.vue'
+import Map from '@/components/Map.vue'
+import { onMounted } from 'vue'
+import {
+  getQuantity
+} from '@/composition/store'
 
 export default {
   setup () {
+    onMounted(() => {
+      getQuantity()
+    })
     return {
-      HelloWorld
+      Navbar,
+      Panel,
+      Map
     }
   }
 }
@@ -19,13 +35,4 @@ export default {
 
 <style lang="scss">
 @import '@/style/all.scss';
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
