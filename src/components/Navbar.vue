@@ -11,6 +11,7 @@
       aria-controls="map-control"
       aria-expanded="false"
       aria-label="Toggle navigation"
+      @click="slide"
     >
       <img class="img-fluid" src="../assets/images/ic_toggler@2x.png" alt="" />
     </button>
@@ -19,9 +20,8 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            href="#"
-            data-toggle="modal"
-            data-target="#staticBackdrop"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
             >口罩怎麼買</a
           >
         </li>
@@ -29,3 +29,16 @@
     </div>
   </nav>
 </template>
+
+<script>
+export default {
+  setup () {
+    const slide = () => {
+      document.querySelector('.map-control-container').classList.toggle('slide-in')
+    }
+    return {
+      slide
+    }
+  }
+}
+</script>

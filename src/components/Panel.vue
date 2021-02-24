@@ -33,8 +33,8 @@
             <button
               type="button"
               class="realname-info btn p-0 rounded-circle"
-              data-toggle="modal"
-              data-target="#staticBackdrop"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
             ></button>
           </h2>
           <div class="d-flex align-items-center my-2">
@@ -42,25 +42,25 @@
               方圓 5 km 以內的的供應商<br />
               更新時間:
               <span
-                v-if="appControl.dataState == 'ready'"
+                v-if="dataState == 'ready'"
                 v-text="timeStamp"
               ></span>
-              <span v-else-if="appControl.dataState !== 'error'"
+              <span v-else-if="dataState !== 'error'"
                 >資料下載中</span
               >
             </p>
             <button
               class="btn rounded-pill my-2 ml-auto"
-              :class="{ active: appControl.dataState == 'download' }"
-              :disabled="appControl.dataState == 'error'"
-              @click="appControl.dataState = 'download'"
+              :class="{ active: dataState == 'download' }"
+              :disabled="dataState == 'error'"
+              @click="dataState = 'download'"
             >
               重整清單
             </button>
           </div>
           <div
             class="mask-sort d-inline-block"
-            v-if="appControl.dataState !== 'error'"
+            v-if="dataState !== 'error'"
           >
             <i class="fas fa-sort-amount-down sort-icon"></i>
             <button
@@ -85,7 +85,7 @@
               小孩口罩
             </button>
           </div>
-          <p class="alert alert-danger" v-if="appControl.dataState == 'error'">
+          <p class="alert alert-danger" v-if="dataState == 'error'">
             抱歉，我們無法讀取口罩即時資料。請稍後再試一次看看，如果再不行請檢查一下網路。
           </p>
           <ul class="pharmacy-list list-group">
@@ -96,14 +96,14 @@
               <ul class="mask-quantity list-group flex-row mb-2">
                 <li
                   class="list-group-item rounded border-0 px-3 w-50"
-                  :class="classify(item.mask_adult)"
+                  :class="classify(item.mask_adult).state"
                 >
                   成人口罩數量<em>{{ item.mask_adult }}</em
                   >片
                 </li>
                 <li
                   class="list-group-item rounded border-0 px-3 w-50"
-                  :class="classify(item.mask_child)"
+                  :class="classify(item.mask_child).state"
                 >
                   兒童口罩數量<em>{{ item.mask_child }}</em
                   >片
@@ -124,7 +124,7 @@
                   <span>{{ item.address }}</span>
                   <a
                     href="#"
-                    @click.prevent="centering(item)"
+                    @click.prevent="centering(item.id)"
                     class="text-secondary"
                     ><i class="fas fa-map-marker-alt"></i
                   ></a>
@@ -149,12 +149,11 @@
               </ul>
             </li>
           </ul>
-          <p class="my-2 text-center" v-if="appControl.chosen.length !== 0">
-            尚有 {{ numPhar }} 筆
+          <p class="my-2 text-center" >
+            前 {{ appControl.itemNum }} 筆
           </p>
           <button
             class="see-more btn d-block rounded-pill mx-auto p-0"
-            v-if="appControl.chosen.length !== 0"
             @click="appControl.itemNum += 10"
           >
             查看更多
@@ -162,9 +161,8 @@
           <div class="position-relative mb-4">
             <button
               class="back-to-top position-absolute btn d-block border-0 rounded-circle mx-auto p-0"
-              v-if="appControl.chosen.length !== 0"
-              type="submit"
-              @click="scrollToTop"
+              type="button"
+              @click="scrollToTop('.map-control-container')"
             >
               TOP
             </button>
@@ -217,7 +215,11 @@
             <span>使用目前位置</span>
             <button
               class="locate-btn btn border-0 rounded-circle ml-auto p-2"
-              @click="findAround"
+              @click="
+                appControl.page = 'main',
+                appControl.mode = 'gps',
+                getGPS()
+              "
             >
               <img
                 class="d-block"
@@ -248,23 +250,43 @@
 
 <script>
 import {
-  usedLoc,
-  appControl,
   listPhar,
-  numPhar,
   timeStamp,
-  avaliableDay
+  dataState
 } from '@/composition/store'
+
+import {
+  classify,
+  centering,
+  getGPS
+} from '@/composition/map'
+
+import {
+  panelInit,
+  appControl,
+  usedLoc,
+  avaliableDay,
+  search,
+  searchRecord,
+  scrollToTop
+} from '@/composition/interface'
 
 export default {
   setup () {
+    panelInit()
     return {
+      classify,
+      centering,
+      getGPS,
+      search,
+      searchRecord,
       usedLoc,
       appControl,
+      dataState,
       listPhar,
-      numPhar,
       timeStamp,
-      avaliableDay
+      avaliableDay,
+      scrollToTop
     }
   }
 }
