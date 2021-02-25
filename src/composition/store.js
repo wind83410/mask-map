@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
-import { map } from '@/composition/map'
-import { curPos, ordering, itemNum } from '@/composition/interface'
+import { map } from '/@/composition/map'
+import { curPos, ordering, itemNum } from '/@/composition/interface'
 
 export const pharmacies = ref([])
 export const timeStamp = ref('') // 時間戳記

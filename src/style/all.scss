@@ -1,8 +1,10 @@
 // vendors
-@import 'bootstrap';
+@import './vendors/bootstrap';
 @import 'leaflet';
 @import 'leaflet.markercluster/dist/MarkerCluster';
 @import 'leaflet.markercluster/dist/MarkerCluster.Default';
+@import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
+@import '@fortawesome/fontawesome-free/css/solid.min.css';
 
 // components
-@import '@/style/components/mask-map'
+@import './components/mask-map'

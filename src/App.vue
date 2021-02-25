@@ -16,7 +16,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+            <h5 class="modal-title" id="staticBackdropLabel">口罩實名制</h5>
             <button
               type="button"
               class="btn-close"
@@ -38,13 +38,13 @@
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue'
-import Panel from '@/components/Panel.vue'
-import Map from '@/components/Map.vue'
+import Navbar from '/@/components/Navbar.vue'
+import Panel from '/@/components/Panel.vue'
+import Map from '/@/components/Map.vue'
 import { onMounted } from 'vue'
 import {
   getQuantity
-} from '@/composition/store'
+} from '/@/composition/store'
 
 export default {
   setup () {
@@ -63,5 +63,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/style/all.scss';
+@import '../src/style/all.scss';
 </style>

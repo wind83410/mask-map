@@ -1,8 +1,8 @@
 import { onMounted, watch, ref } from 'vue'
 import L from 'leaflet'
 import 'leaflet.markercluster'
-import { dataState, pharmacies, orderPhar } from '@/composition/store'
-import { ordering, userPos, mode } from '@/composition/interface'
+import { dataState, pharmacies, orderPhar } from '/@/composition/store'
+import { ordering, userPos, mode } from '/@/composition/interface'
 
 const greenIcon = new L.icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -56,25 +56,27 @@ const addSpot = el => {
   const marker = L.marker({ lat: el.lat, lng: el.lng }, { icon })
     .bindPopup(`
       <h6 class="text-center">${el.name}</h5>
-      <ul class="d-flex mask-popup list-unstyled mb-2">
-        <li class="${classify(el.mask_adult).state} rounded border-0 mr-1 py-1 px-1 w-50 text-center h5">${el.mask_adult}</li>
-        <li class="${classify(el.mask_child).state} rounded border-0 py-1 px-1 w-50 text-center h5">${el.mask_child}</li>
+      <ul class="d-flex popup-masks list-unstyled mb-2">
+        <li class="${classify(el.mask_adult).state} rounded me-1 py-1 px-1 w-50 text-center h5">${el.mask_adult}</li>
+        <li class="${classify(el.mask_child).state} rounded py-1 px-1 w-50 text-center h5">${el.mask_child}</li>
       </ul>
-      <dl class="row no-gutters info-popup mb-2">
-        <dt class="col-3 text-secondary">口罩</dt>
-        <dd class="col-9">${el.note}</dd>
-        <dt class="col-3 text-secondary">備註</dt>
-        <dd class="col-9">${el.custom_note}</dd>
+      <dl class="popup-mask-info mb-2">
+        <div class="row g-2">
+          <dt class="col-3 text-secondary">口罩</dt>
+          <dd class="col-9">${el.note}</dd>
+          <dt class="col-3 text-secondary">備註</dt>
+          <dd class="col-9">${el.custom_note}</dd>
+        </div>
       </dl>
-      <div class="d-flex w-100">
-        <a class="flex-grow-1 text-primary text-center mr-1"
+      <div class="d-flex popup-link-group">
+        <a class="py-2 popup-link rounded"
           href="https://www.google.com/maps/search/?api=1&query=${el.name}+${el.address}"
           target="_blank"
         >
           <i class="fas fa-clock"></i>
           營業時間
         </a>
-        <a class="flex-grow-1 text-primary text-center text-secondary"
+        <a class="py-2 popup-link rounded"
           href="tel:${el.phone}">
           <i class="fas fa-phone"></i>
           打電話

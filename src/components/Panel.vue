@@ -12,45 +12,38 @@
           <div
             class="search-control input-group my-2 my-lg-0 rounded"
             @click="
-              appControl.page = 'control',
-              appControl.searchText.cur = ''
+              ;(appControl.page = 'control'), (appControl.searchText.cur = '')
             "
           >
-            <p class="searchbar form-control border border-right-0 my-0">
+            <p class="searchbar form-control border border-end-0 my-0">
               <span
                 v-if="appControl.searchText == '' && appControl.mode !== 'gps'"
                 >點一下搜尋地點或使用定位</span
               >
               <span v-else-if="appControl.mode == 'gps'">目前定位</span>
-              <span v-else v-text="appControl.searchText.pre"></span>
+              <span v-else> {{ appControl.searchText.pre }} </span>
             </p>
-            <span class="find-phar btn border border-left-0">
+            <span class="find-phar input-group-text">
               <i class="fas fa-crosshairs"></i>
             </span>
           </div>
           <h2 class="available my-3">
-            <span> {{ avaliableDay }} </span><small class="ml-2">購買日</small>
+            <span> {{ avaliableDay }} </span><small class="ms-1">購買日</small>
             <button
               type="button"
-              class="realname-info btn p-0 rounded-circle"
+              class="realname-info btn p-0 ms-2 rounded-circle"
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop"
             ></button>
           </h2>
           <div class="d-flex align-items-center my-2">
             <p class="description my-auto">
-              方圓 5 km 以內的的供應商<br />
               更新時間:
-              <span
-                v-if="dataState == 'ready'"
-                v-text="timeStamp"
-              ></span>
-              <span v-else-if="dataState !== 'error'"
-                >資料下載中</span
-              >
+              <span v-if="dataState == 'ready'" v-text="timeStamp"></span>
+              <span v-else-if="dataState !== 'error'">資料下載中</span>
             </p>
             <button
-              class="btn rounded-pill my-2 ml-auto"
+              class="btn btn-outline-primary rounded-pill my-2 ms-auto"
               :class="{ active: dataState == 'download' }"
               :disabled="dataState == 'error'"
               @click="dataState = 'download'"
@@ -58,32 +51,43 @@
               重整清單
             </button>
           </div>
-          <div
-            class="mask-sort d-inline-block"
-            v-if="dataState !== 'error'"
-          >
-            <i class="fas fa-sort-amount-down sort-icon"></i>
-            <button
-              class="btn py-1 ml-1 rounded-pill"
-              :class="{ active: appControl.category == 'distance' }"
-              @click="appControl.category = 'distance'"
-            >
-              距離
-            </button>
-            <button
-              class="btn py-1 ml-1 rounded-pill"
-              :class="{ active: appControl.category == 'adult' }"
-              @click="appControl.category = 'adult'"
-            >
-              大人口罩
-            </button>
-            <button
-              class="btn py-1 ml-1 rounded-pill"
-              :class="{ active: appControl.category == 'child' }"
-              @click="appControl.category = 'child'"
-            >
-              小孩口罩
-            </button>
+          <div class="d-flex align-items-center" v-if="dataState !== 'error'">
+            <i class="fas fa-sort-amount-down sort-icon me-3"></i>
+            <div class="btn-group" v-if="dataState !== 'error'">
+              <input
+                type="radio"
+                value="distance"
+                id="sort-distance"
+                v-model="appControl.category"
+                class="btn-check"
+                :class="{ active: appControl.category == 'distance' }"
+              />
+              <label for="sort-distance" class="btn btn-outline-primary"
+                >距離</label
+              >
+              <input
+                type="radio"
+                value="adult"
+                id="sort-adult-mask"
+                v-model="appControl.category"
+                class="btn-check"
+                :class="{ active: appControl.category == 'adult' }"
+              />
+              <label for="sort-adult-mask" class="btn btn-outline-primary"
+                >大人口罩</label
+              >
+              <input
+                type="radio"
+                value="child"
+                id="sort-child-mask"
+                v-model="appControl.category"
+                class="btn-check"
+                :class="{ active: appControl.category == 'child' }"
+              />
+              <label for="sort-child-mask" class="btn btn-outline-primary"
+                >小孩口罩</label
+              >
+            </div>
           </div>
           <p class="alert alert-danger" v-if="dataState == 'error'">
             抱歉，我們無法讀取口罩即時資料。請稍後再試一次看看，如果再不行請檢查一下網路。
@@ -91,92 +95,93 @@
           <ul class="pharmacy-list list-group">
             <li
               class="list-group-item my-2 px-3 border-0 rounded"
-              v-for="(item, ind) in listPhar" :key="`pharmacy-${ind}`"
+              v-for="(item, ind) in listPhar"
+              :key="`pharmacy-${ind}`"
             >
-              <ul class="mask-quantity list-group flex-row mb-2">
+              <ul class="mask-stock text-white list-unstyled d-flex mb-2">
                 <li
-                  class="list-group-item rounded border-0 px-3 w-50"
+                  class="rounded p-3 w-50 me-2"
                   :class="classify(item.mask_adult).state"
                 >
-                  成人口罩數量<em>{{ item.mask_adult }}</em
+                  成人口罩數量<em class="mask-stock-quan">{{ item.mask_adult }}</em
                   >片
                 </li>
                 <li
-                  class="list-group-item rounded border-0 px-3 w-50"
+                  class="rounded p-3 w-50"
                   :class="classify(item.mask_child).state"
                 >
-                  兒童口罩數量<em>{{ item.mask_child }}</em
+                  兒童口罩數量<em class="mask-stock-quan">{{ item.mask_child }}</em
                   >片
                 </li>
               </ul>
-              <h3 class="pharmacy-name d-flex">
-                {{ item.name }}
+              <div class="pharmacy-name">
+                <h3 class="pharmacy-name__name mb-0">{{ item.name }}</h3>
                 <a
                   :href="`https://www.google.com/maps/search/?api=1&query=${item.name}+${item.address}`"
                   target="_blank"
-                  class="text-secondary ml-auto"
-                  ><small><i class="fas fa-clock"></i></small
-                ></a>
-              </h3>
-              <ul class="pharmacy-info list-group">
-                <li class="list-group-item px-0 py-1 border-0">
-                  <small class="info-item text-secondary">地址</small>
-                  <span>{{ item.address }}</span>
+                  class="pharmacy-name__btn btn btn-outline-secondary"
+                  ><i class="fas fa-clock"></i></a>
+              </div>
+              <ul class="phar-info list-unstyled d-flex flex-column">
+                <li class="phar-info-item px-0 py-1 border-0">
+                  <small class="text-secondary phar-info-item__title">地址</small>
+                  <span class="phar-info-item__content">{{ item.address }}</span>
                   <a
                     href="#"
                     @click.prevent="centering(item.id)"
-                    class="text-secondary"
+                    class="phar-info-item__btn btn btn-outline-secondary"
                     ><i class="fas fa-map-marker-alt"></i
                   ></a>
                 </li>
-                <li class="list-group-item px-0 py-1 border-0">
-                  <small class="info-item text-secondary">電話</small>
-                  <span>{{ item.phone }}</span>
-                  <a
-                    :href="'tel:' + item.phone"
-                    class="text-secondary"
+                <li class="phar-info-item px-0 py-1 border-0">
+                  <small class="text-secondary phar-info-item__title">電話</small>
+                  <span class="phar-info-item__content">{{ item.phone }}</span>
+                  <a :href="'tel:' + item.phone" class="phar-info-item__btn btn btn-outline-secondary"
                     ><i class="fas fa-phone"></i
                   ></a>
                 </li>
-                <li class="list-group-item side-note px-0 py-1 border-0">
-                  <small class="info-item text-secondary">口罩</small>
-                  <span>{{ item.note }}</span>
+                <li class="phar-info-item px-0 py-1 border-0">
+                  <small class="text-secondary phar-info-item__title">口罩</small>
+                  <span class="phar-info-item__content side-note">{{ item.note }}</span>
                 </li>
-                <li class="list-group-item side-note px-0 py-1 border-0">
-                  <small class="info-item text-secondary">備註</small>
-                  <span>{{ item.custom_note }}</span>
+                <li class="phar-info-item px-0 py-1 border-0">
+                  <small class="text-secondary phar-info-item__title">備註</small>
+                  <span class="phar-info-item__content side-note">{{ item.custom_note }}</span>
                 </li>
               </ul>
             </li>
           </ul>
-          <p class="my-2 text-center" >
-            前 {{ appControl.itemNum }} 筆
-          </p>
-          <button
-            class="see-more btn d-block rounded-pill mx-auto p-0"
-            @click="appControl.itemNum += 10"
-          >
-            查看更多
-          </button>
-          <div class="position-relative mb-4">
+          <p class="my-2 text-center">前 {{ appControl.itemNum }} 筆</p>
+          <div class="position-relative d-flex">
             <button
-              class="back-to-top position-absolute btn d-block border-0 rounded-circle mx-auto p-0"
+              class="see-more btn btn-primary d-block rounded-pill p-0"
+              type="button"
+              @click="appControl.itemNum += 10"
+            >
+              查看更多
+            </button>
+          </div>
+          <button
+              class="back-to-top btn btn-primary d-block border-0 rounded-circle ms-auto mb-4 p-0"
               type="button"
               @click="scrollToTop('.map-control-container')"
             >
               TOP
             </button>
-          </div>
         </template>
         <template v-if="appControl.page == 'control'">
-          <form
-            class="search-control input-group justify-content-center mb-3 rounded"
+          <div
+            class="search-control input-group mb-3 px-3 rounded"
           >
-            <button class="back btn" type="button" @click.prevent="appControl.page = 'main'">
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              @click.prevent="appControl.page = 'main'"
+            >
               <i class="fas fa-chevron-left"></i>
             </button>
             <input
-              class="searchbar form-control border border-right-0"
+              class="searchbar form-control"
               v-model="appControl.searchText.cur"
               type="text"
               aria-label="Search"
@@ -184,41 +189,39 @@
             />
             <button
               type="button"
-              class="find-phar btn border border-left-0 mr-3"
+              class="btn btn-outline-primary"
               @click.prevent="search(appControl.searchText.cur)"
             >
               <i class="fas fa-search-location"></i>
             </button>
-          </form>
-          <div class="history-list-title px-3 mb-2 d-flex align-items-center">
-            <h3 class="my-2">最近搜尋</h3>
+          </div>
+          <div class="bg-primary text-white px-3 mb-2 d-flex align-items-center">
+            <span class="my-2">最近搜尋</span>
             <button
-              class="clear-all btn rounded-pill ml-auto py-1"
+              class="btn btn-sm btn-outline-light rounded-pill ms-auto py-1"
               @click="usedLoc.searchLoc = []"
             >
               清除
             </button>
           </div>
           <div class="flex-grow-1 overflow-auto h-100">
-            <ul class="history-list list-group mx-3">
+            <ul class="list-group mx-3">
               <li
                 v-for="(record, ind) in usedLoc.searchLoc"
                 :key="`record-${ind}`"
                 @click="searchRecord(record)"
-                class="list-group-item rounded-0 border-top-0 border-left-0 border-right-0"
+                class="search-record list-group-item list-group-item-action"
               >
                 {{ record.name }}
               </li>
             </ul>
           </div>
           <div class="locate d-flex position-absolute align-items-center">
-            <span>使用目前位置</span>
+            <span class="locate__text">使用目前位置</span>
             <button
-              class="locate-btn btn border-0 rounded-circle ml-auto p-2"
+              class="locate__btn btn btn-lg border-0 rounded-circle ml-auto p-2"
               @click="
-                appControl.page = 'main',
-                appControl.mode = 'gps',
-                getGPS()
+                ;(appControl.page = 'main'), (appControl.mode = 'gps'), getGPS()
               "
             >
               <img
@@ -230,16 +233,16 @@
           </div>
         </template>
       </div>
-      <footer class="copyright px-4 py-3">
-        <ul class="list-group list-group-horizontal">
+      <footer class="copyright bg-primary px-4 py-3">
+        <ul class="list-unstyled text-white">
           <li
-            class="list-group-item border-left-0 border-white border-bottom-0 border-top-0 py-0 pl-0 pr-2"
+            class="d-inline-block border-white py-0 pe-2"
           >
             防疫專線 1922
           </li>
-          <li class="list-group-item border-0 py-0 pl-2 pr-0">口罩資訊 1911</li>
+          <li class="d-inline-block border-white border-start py-0 px-2">口罩資訊 1911</li>
         </ul>
-        <p class="mt-2">
+        <p class="mt-2 text-white">
           Search Engine: Nominatim <br />
           Developer: Mack Chen / UI: PY Design
         </p>
@@ -253,13 +256,13 @@ import {
   listPhar,
   timeStamp,
   dataState
-} from '@/composition/store'
+} from '/@/composition/store'
 
 import {
   classify,
   centering,
   getGPS
-} from '@/composition/map'
+} from '/@/composition/map'
 
 import {
   panelInit,
@@ -269,7 +272,7 @@ import {
   search,
   searchRecord,
   scrollToTop
-} from '@/composition/interface'
+} from '/@/composition/interface'
 
 export default {
   setup () {
@@ -291,6 +294,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

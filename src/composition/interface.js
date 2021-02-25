@@ -1,6 +1,6 @@
 import { reactive, toRef, computed, onMounted, watch } from 'vue'
-import { dataState, getQuantity } from '@/composition/store'
-import { map, updateUserPos } from '@/composition/map'
+import { dataState, getQuantity } from '/@/composition/store'
+import { map, updateUserPos } from '/@/composition/map'
 import Modal from 'bootstrap/js/dist/modal'
 
 export const usedLoc = reactive({ // 使用過的位置紀錄

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapInit } from '@/composition/map'
+import { mapInit } from '/@/composition/map'
 
 export default {
   setup () {
@@ -13,7 +13,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
