@@ -162,7 +162,10 @@ export const mapInit = () => {
   })
 
   watch(itemNum, (cur, pre) => {
-    if (cur > pre) { listPhar.value.slice(pre, cur + 1).forEach(el => addSpot(el)) }
+    if (cur > pre) {
+      clearSpots()
+      listPhar.value.forEach(element => addSpot(element))
+    }
   })
 
   watch(ordering, (cur, pre) => {
