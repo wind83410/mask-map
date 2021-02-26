@@ -1,8 +1,16 @@
 import { onMounted, watch, ref } from 'vue'
 import L from 'leaflet'
-import 'leaflet.markercluster'
-import { dataState, pharmacies, orderPhar } from '/@/composition/store'
-import { ordering, userPos, mode } from '/@/composition/interface'
+import { dataState, listPhar, orderPhar } from '/@/composition/store'
+import { ordering, userPos, mode, itemNum } from '/@/composition/interface'
+
+const blueIcon = new L.icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+})
 
 const greenIcon = new L.icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -31,9 +39,9 @@ const orangeIcon = new L.icon({
   shadowSize: [41, 41]
 });
 
-const markerGroups = new L.MarkerClusterGroup();
+// const markerGroups = new L.MarkerClusterGroup();
 const markers = []
-export const userMarker = L.marker(userPos.value.cur).bindPopup(`現在位置`)
+export const userMarker = L.marker(userPos.value.cur, {icon: blueIcon}).bindPopup(`現在位置`)
 export const map = ref(null)
 
 export const classify = (mask_quan) => {
@@ -86,22 +94,25 @@ const addSpot = el => {
   marker.markerId = el.id
   marker.mask_adult = el.mask_adult
   marker.mask_child = el.mask_child
-  markerGroups.addLayer(marker)
+  map.value.addLayer(marker)
   markers.push(marker)
 }
 
 const swapIcons = maskType => markers.forEach(el => el.setIcon(classify(el[maskType]).icon))
 
 const clearSpots = () => {
+  markers.forEach((m) => map.value.removeLayer(m))
   markers.length = 0
-  markerGroups.clearLayers()
 }
 
 export const updateUserPos = newPos => {
+  itemNum.value = 10
   userPos.value.pre = userPos.value.cur
   userPos.value.cur.lat = newPos.lat
   userPos.value.cur.lng = newPos.lng
   orderPhar()
+  clearSpots()
+  listPhar.value.forEach(element => addSpot(element))
   userMarker.setLatLng(userPos.value.cur)
 }
 
@@ -141,17 +152,20 @@ export const mapInit = () => {
     }).addTo(map.value);
 
     map.value.addLayer(userMarker).flyTo(userMarker.getLatLng(), 12)
-    map.value.addLayer(markerGroups)
   })
 
   watch(dataState, (state, preState) => {
     if (state === 'ready' && preState === 'load') {
       clearSpots()
-      pharmacies.value.forEach(element => addSpot(element))
+      listPhar.value.forEach(element => addSpot(element))
     }
   })
 
+  watch(itemNum, (cur, pre) => {
+    if (cur > pre) { listPhar.value.slice(pre, cur + 1).forEach(el => addSpot(el)) }
+  })
+
   watch(ordering, (cur, pre) => {
-    swapIcons(`mask_${cur !== 'child' ? 'adult' : cur}`)
+    if (cur !== pre) swapIcons(`mask_${cur !== 'child' ? 'adult' : cur}`)
   })
 }
