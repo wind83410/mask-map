@@ -64,12 +64,12 @@ export const search = async keyword => {
 
   if (result.length) {
     const [lng, lat] = result[0].geometry.coordinates
-    updateUserPos({lat, lng})
+    updateUserPos({ lat, lng })
     map.value.setView(curPos.value, 16)
     if (!searched.includes(keyword)) {
       searched.push({
         name: keyword,
-        coordinates: {lat, lng}
+        coordinates: { lat, lng }
       })
       appControl.searchText.pre = keyword
       mode.value = 'search'
@@ -98,7 +98,7 @@ export const scrollToTop = (selectorName, duration = 1000) => {
     if (oldTimeStamp !== null) {
       scrollCount += Math.PI * (newTimeStamp - oldTimeStamp) / duration
       if (scrollCount >= Math.PI) { return targetEl.scrollTop = 0 } // terminate recursion
-      targetEl.scrollTop = scrollPos / 2 * ( 1 + Math.cos(scrollCount) )
+      targetEl.scrollTop = scrollPos / 2 * (1 + Math.cos(scrollCount))
     }
     oldTimeStamp = newTimeStamp
     window.requestAnimationFrame(step)
