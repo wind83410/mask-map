@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid px-0 d-flex flex-column monitor">
     <Navbar />
-    <div class="map-interface d-flex">
+    <div class="map-interface d-flex flex-item-unscroll">
       <Panel />
       <Map />
     </div>
