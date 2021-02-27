@@ -1,11 +1,15 @@
 <template>
-  <div class="map-control-container h-100 overflow-auto">
-    <div class="bg-light d-flex flex-column" id="map-control">
+  <div class="map-control-container overflow-auto">
+    <div
+      class="bg-light d-flex flex-column"
+      :class="{ 'h-100': appControl.page == 'control' }"
+      id="map-control"
+    >
       <div
         class="pt-3 flex-grow-1"
         :class="{
           'px-3': appControl.page == 'main',
-          'd-flex flex-column position-relative': appControl.page == 'control'
+          'd-flex flex-column position-relative flex-item-unscroll': appControl.page == 'control'
         }"
       >
         <template v-if="appControl.page == 'main'">
@@ -103,14 +107,18 @@
                   class="rounded p-3 w-50 me-2"
                   :class="classify(item.mask_adult).state"
                 >
-                  成人口罩數量<em class="mask-stock-quan">{{ item.mask_adult }}</em
+                  成人口罩數量<em class="mask-stock-quan">{{
+                    item.mask_adult
+                  }}</em
                   >片
                 </li>
                 <li
                   class="rounded p-3 w-50"
                   :class="classify(item.mask_child).state"
                 >
-                  兒童口罩數量<em class="mask-stock-quan">{{ item.mask_child }}</em
+                  兒童口罩數量<em class="mask-stock-quan">{{
+                    item.mask_child
+                  }}</em
                   >片
                 </li>
               </ul>
@@ -120,12 +128,17 @@
                   :href="`https://www.google.com/maps/search/?api=1&query=${item.name}+${item.address}`"
                   target="_blank"
                   class="pharmacy-name__btn btn btn-outline-secondary"
-                  ><i class="fas fa-clock"></i></a>
+                  ><i class="fas fa-clock"></i
+                ></a>
               </div>
               <ul class="phar-info list-unstyled d-flex flex-column">
                 <li class="phar-info-item px-0 py-1 border-0">
-                  <small class="text-secondary phar-info-item__title">地址</small>
-                  <span class="phar-info-item__content">{{ item.address }}</span>
+                  <small class="text-secondary phar-info-item__title"
+                    >地址</small
+                  >
+                  <span class="phar-info-item__content">{{
+                    item.address
+                  }}</span>
                   <a
                     href="#"
                     @click.prevent="centering(item.id)"
@@ -134,19 +147,31 @@
                   ></a>
                 </li>
                 <li class="phar-info-item px-0 py-1 border-0">
-                  <small class="text-secondary phar-info-item__title">電話</small>
+                  <small class="text-secondary phar-info-item__title"
+                    >電話</small
+                  >
                   <span class="phar-info-item__content">{{ item.phone }}</span>
-                  <a :href="'tel:' + item.phone" class="phar-info-item__btn btn btn-outline-secondary"
+                  <a
+                    :href="'tel:' + item.phone"
+                    class="phar-info-item__btn btn btn-outline-secondary"
                     ><i class="fas fa-phone"></i
                   ></a>
                 </li>
                 <li class="phar-info-item px-0 py-1 border-0">
-                  <small class="text-secondary phar-info-item__title">口罩</small>
-                  <span class="phar-info-item__content side-note">{{ item.note }}</span>
+                  <small class="text-secondary phar-info-item__title"
+                    >口罩</small
+                  >
+                  <span class="phar-info-item__content side-note">{{
+                    item.note
+                  }}</span>
                 </li>
                 <li class="phar-info-item px-0 py-1 border-0">
-                  <small class="text-secondary phar-info-item__title">備註</small>
-                  <span class="phar-info-item__content side-note">{{ item.custom_note }}</span>
+                  <small class="text-secondary phar-info-item__title"
+                    >備註</small
+                  >
+                  <span class="phar-info-item__content side-note">{{
+                    item.custom_note
+                  }}</span>
                 </li>
               </ul>
             </li>
@@ -162,17 +187,15 @@
             </button>
           </div>
           <button
-              class="back-to-top btn btn-primary d-block border-0 rounded-circle ms-auto mb-4 p-0"
-              type="button"
-              @click="scrollToTop('.map-control-container')"
-            >
-              TOP
-            </button>
+            class="back-to-top btn btn-primary d-block border-0 rounded-circle ms-auto mb-4 p-0"
+            type="button"
+            @click="scrollToTop('.map-control-container')"
+          >
+            TOP
+          </button>
         </template>
         <template v-if="appControl.page == 'control'">
-          <div
-            class="search-control input-group mb-3 px-3 rounded"
-          >
+          <div class="search-control input-group mb-3 px-3 rounded">
             <button
               class="btn btn-outline-primary"
               type="button"
@@ -195,7 +218,7 @@
               <i class="fas fa-search-location"></i>
             </button>
           </div>
-          <div class="bg-primary text-white px-3 mb-2 d-flex align-items-center">
+          <div class="bg-primary text-white px-3 d-flex align-items-center">
             <span class="my-2">最近搜尋</span>
             <button
               class="btn btn-sm btn-outline-light rounded-pill ms-auto py-1"
@@ -204,7 +227,7 @@
               清除
             </button>
           </div>
-          <div class="flex-grow-1 overflow-auto h-100">
+          <div class="flex-grow-1 py-2 overflow-auto">
             <ul class="list-group mx-3">
               <li
                 v-for="(record, ind) in usedLoc.searchLoc"
@@ -235,12 +258,10 @@
       </div>
       <footer class="copyright bg-primary px-4 py-3">
         <ul class="list-unstyled text-white">
-          <li
-            class="d-inline-block border-white py-0 pe-2"
-          >
-            防疫專線 1922
+          <li class="d-inline-block border-white py-0 pe-2">防疫專線 1922</li>
+          <li class="d-inline-block border-white border-start py-0 px-2">
+            口罩資訊 1911
           </li>
-          <li class="d-inline-block border-white border-start py-0 px-2">口罩資訊 1911</li>
         </ul>
         <p class="mt-2 text-white">
           Search Engine: Nominatim <br />
