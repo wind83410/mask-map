@@ -66,7 +66,7 @@ export const search = async keyword => {
     const [lng, lat] = result[0].geometry.coordinates
     updateUserPos({ lat, lng })
     map.value.setView(curPos.value, 16)
-    if (!searched.includes(keyword)) {
+    if (!searched.some(obj => obj.name === keyword)) {
       searched.push({
         name: keyword,
         coordinates: { lat, lng }
